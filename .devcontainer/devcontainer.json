@@ -1,0 +1,27 @@
+{
+    "name": "Java Gradle Dev Container",
+    "image": "mcr.microsoft.com/vscode/devcontainers/java:21",  // or replace with "java:17" for Java 17
+    "containerEnv": { "TZ": "Asia/Kolkata" },
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          "vscjava.vscode-java-pack", // Java Extension Pack
+          "vscjava.vscode-gradle",    // Gradle for Java
+          "pivotal.vscode-boot-dev-pack" // Spring Boot Extension Pack (if you're using Spring Boot)
+        ]
+      },
+      "jetbrains": {
+        "plugins": [
+          "com.google.cloud.tools.jetbrains"
+        ]
+      }
+    },
+    "postCreateCommand": "./gradlew publishToMavenLocal", // Builds the project after the container is created
+    "remoteUser": "vscode",
+    "mounts": [
+      "source=${env:HOME}/.m2,target=/home/vscode/.m2,type=bind", // Mounts ~/.m2 directory from host
+      "source=${env:HOME}/.gradle,target=/home/vscode/.gradle,type=bind,consistency=cached"
+    ],
+//    "workspaceFolder": "/workspace3",
+    "runArgs": ["--init"]
+}

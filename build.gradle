@@ -1,0 +1,43 @@
+plugins {
+	id "java-library"
+	id "maven-publish"
+}
+
+//group = 'com.mytrading'
+//version = '0.2'
+
+java {
+	sourceCompatibility = '21'
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+dependencies {
+    implementation 'org.flywaydb:flyway-core:10.17.0'
+}
+
+jar {
+	enabled = false
+}
+
+def sourceJar = tasks.register('sourceJar', Jar) {
+	archiveClassifier.set('sources')
+	from sourceSets.main.allJava
+}
+
+publishing {
+	publications {
+		create("mavenJava", MavenPublication) {
+			groupId = 'com.mytrading'
+			artifactId = 'vr_login_db'
+			version = '0.3'
+
+			from components.java
+			//artifact sourceJar
+			artifact sourceJar.get()
+		}
+	}
+}
