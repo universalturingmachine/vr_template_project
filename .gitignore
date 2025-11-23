@@ -35,3 +35,6 @@ out/
 .vscode/
 
 *.swp
+
+### devbox ###
+gradle.properties

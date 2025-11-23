@@ -1,0 +1,11 @@
+{
+  "packages": {
+    "jdk" : "21",
+    "gradle": "8.14"
+  },
+  "shell": {
+    "init_hook": [
+      "./gradlew publishToMavenLocal"
+    ]
+  }
+}

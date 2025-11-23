@@ -1,2 +1,2 @@
-# vr_login_db
-This is vr login db project
+# vr_trade_manager
+VR Trade Manager

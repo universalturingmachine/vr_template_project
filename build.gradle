@@ -3,9 +3,6 @@ plugins {
 	id "maven-publish"
 }
 
-//group = 'com.mytrading'
-//version = '0.2'
-
 java {
 	sourceCompatibility = '21'
 }
@@ -16,11 +13,18 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.flywaydb:flyway-core:10.17.0'
+    implementation 'com.mytrading.utils:myutils:0.4'
+    implementation 'org.slf4j:slf4j-api:2.0.17'
+    implementation 'ch.qos.logback:logback-classic:1.5.21'
+    compileOnly 'org.projectlombok:lombok:1.18.42'
+	annotationProcessor 'org.projectlombok:lombok:1.18.42'
+
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-jar {
-	enabled = false
+test {
+	useJUnitPlatform()
 }
 
 def sourceJar = tasks.register('sourceJar', Jar) {
@@ -31,9 +35,9 @@ def sourceJar = tasks.register('sourceJar', Jar) {
 publishing {
 	publications {
 		create("mavenJava", MavenPublication) {
-			groupId = 'com.mytrading'
-			artifactId = 'vr_login_db'
-			version = '0.3'
+			groupId = 'com.vrtrading'
+			artifactId = 'vr_trade_manager'
+			version = '0.1'
 
 			from components.java
 			//artifact sourceJar

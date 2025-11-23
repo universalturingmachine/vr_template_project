@@ -3,4 +3,4 @@ pluginManagement {
 		gradlePluginPortal()
 	}
 }
-rootProject.name = 'vr_login_db'
+rootProject.name = 'vr_trade_manager'
