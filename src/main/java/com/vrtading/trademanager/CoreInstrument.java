@@ -1,17 +1,7 @@
 package com.vrtading.trademanager;
 
 public record CoreInstrument(
-	long instrumentToken,
-	String tradingSymbol,
-	String exchange,
-	String segment
+        String broker,
+        String instrumentId
 ) {
-	public CoreInstrument(Instrument instrument) {
-		this(
-			instrument.instrumentToken(),
-			instrument.tradingSymbol(),
-			instrument.exchange(),
-			instrument.segment()
-		);
-	}
 }

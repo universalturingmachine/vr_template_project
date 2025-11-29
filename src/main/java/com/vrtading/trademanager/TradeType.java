@@ -3,11 +3,11 @@ package com.vrtading.trademanager;
 public enum TradeType {
     LONG, SHORT, LONG_EXIT, SHORT_EXIT;
 
-    public static boolean isEntryTradeType(TradeType tradeType) {
-        return tradeType == LONG || tradeType == SHORT;
+    public boolean isEntryTradeType() {
+        return this == LONG || this == SHORT;
     }
 
-    public static boolean isExitTradeType(TradeType tradeType) {
-        return tradeType == LONG_EXIT || tradeType == SHORT_EXIT;
+    public boolean isExitTradeType() {
+        return this == LONG_EXIT || this == SHORT_EXIT;
     }
 }

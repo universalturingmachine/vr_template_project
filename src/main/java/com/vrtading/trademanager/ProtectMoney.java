@@ -1,7 +1,7 @@
 package com.vrtading.trademanager;
 
+import com.mytrading.utils.DecimalValue;
 import com.mytrading.utils.Kvp;
-import com.mytrading.utils.MyUtils;
 
 import java.util.List;
 
@@ -13,24 +13,24 @@ public final class ProtectMoney {
 	private static final double stopLossPercent = 1;
 	private static final double stopLossAbsolute = 3000;
 
-	public static double getStopLoss(TradeType tradeType, int lotSize, double price) {
-        double stopLossPercent = getStopLossPercent(tradeType, price);
-        double stopLossAbsolute = getStopLossAbsolute(tradeType, lotSize, price);
+	public static DecimalValue getStopLoss(TradeType tradeType, int lotSize, DecimalValue price) {
+        DecimalValue stopLossPercent = getStopLossPercent(tradeType, price);
+        DecimalValue stopLossAbsolute = getStopLossAbsolute(tradeType, lotSize, price);
 
-        return Math.min(stopLossPercent, stopLossAbsolute);
+        return DecimalValue.min(stopLossPercent, stopLossAbsolute);
 	}
-	
-	private static double getStopLossPercent(TradeType tradeType, double price) {
+
+	private static DecimalValue getStopLossPercent(TradeType tradeType, DecimalValue price) {
 		int sign = getSign(tradeType);
-		double stopLoss = price * (100 + sign * stopLossPercent) / 100; 
-		return MyUtils.getRoundedValue(stopLoss);
+		double stopLossValue = price.value() * (100 + sign * stopLossPercent) / 100;
+		return new DecimalValue(stopLossValue);
 	}
-	
-	private static double getStopLossAbsolute(TradeType tradeType, int lotSize, double price) {
+
+	private static DecimalValue getStopLossAbsolute(TradeType tradeType, int lotSize, DecimalValue price) {
 		int sign = getSign(tradeType);
 		double lossMoney = stopLossAbsolute / lotSize;
-		double stopLoss = price + sign * lossMoney;
-		return stopLoss;
+		double stopLossValue = price.value() + sign * lossMoney;
+		return new DecimalValue(stopLossValue);
 	}
 	
 	private static int getSign(TradeType tradeType) {

@@ -1,18 +1,28 @@
 package com.vrtading.trademanager;
 
+import com.mytrading.utils.DecimalValue;
+
 import java.time.OffsetDateTime;
 
 public record VRTrade(
-	CoreInstrument coreInstrument,
-	OffsetDateTime timestamp,
-	int tradeId,
-	TradeType type,
-	int quantity,
-	double avgPrice
+        String brokerName,
+        String instrumentId,
+        String exchange,
+        String segment,
+        OffsetDateTime timestamp,
+        String tradeId,
+        TradeType type,
+        DecimalValue quantity,
+        DecimalValue price,
+        DecimalValue stopLoss
 ) {
 	@Override
 	public String toString() {
-		return "VRTrade [" + coreInstrument.tradingSymbol() + ", " + timestamp + ", type=" + type + ", quantity=" + quantity
-				+ ", avgPrice=" + avgPrice + "]";
+		return "VRTrade [" + instrumentId + ", " + timestamp + ", type=" + type + ", quantity=" + quantity
+				+ ", price=" + price + ", stopLoss=" + stopLoss + "]";
 	}
+
+    public boolean isEntryTrade() {
+        return type.isEntryTradeType();
+    }
 }

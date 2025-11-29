@@ -1,5 +1,6 @@
 package com.vrtading.trademanager;
 
+import com.mytrading.utils.DecimalValue;
 import com.mytrading.utils.Kvp;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -38,11 +39,12 @@ class ProtectMoneyTest {
         "50, 100, 20.0",       // price=50, lotSize=100 -> min(49.5, 20.0) = 20.0
         "10000, 100, 9900.0"   // price=10000, lotSize=100 -> min(9900.0, 9970.0) = 9900.0
     })
-    void testGetStopLossForLong(double price, int lotSize, double expectedStopLoss) {
-        double actualStopLoss = ProtectMoney.getStopLoss(TradeType.LONG, lotSize, price);
-        assertEquals(expectedStopLoss, actualStopLoss, 0.01,
+    void testGetStopLossForLong(double priceValue, int lotSize, double expectedStopLoss) {
+        DecimalValue price = new DecimalValue(priceValue);
+        DecimalValue actualStopLoss = ProtectMoney.getStopLoss(TradeType.LONG, lotSize, price);
+        assertEquals(expectedStopLoss, actualStopLoss.value(), 0.01,
             String.format("Stop loss for LONG at price %.2f with lotSize %d should be %.2f",
-                price, lotSize, expectedStopLoss));
+                priceValue, lotSize, expectedStopLoss));
     }
 
     @ParameterizedTest
@@ -56,11 +58,12 @@ class ProtectMoneyTest {
         "50, 100, 50.5",       // price=50, lotSize=100 -> min(50.5, 80.0) = 50.5
         "10000, 100, 10030.0"  // price=10000, lotSize=100 -> min(10100.0, 10030.0) = 10030.0
     })
-    void testGetStopLossForShort(double price, int lotSize, double expectedStopLoss) {
-        double actualStopLoss = ProtectMoney.getStopLoss(TradeType.SHORT, lotSize, price);
-        assertEquals(expectedStopLoss, actualStopLoss, 0.01,
+    void testGetStopLossForShort(double priceValue, int lotSize, double expectedStopLoss) {
+        DecimalValue price = new DecimalValue(priceValue);
+        DecimalValue actualStopLoss = ProtectMoney.getStopLoss(TradeType.SHORT, lotSize, price);
+        assertEquals(expectedStopLoss, actualStopLoss.value(), 0.01,
             String.format("Stop loss for SHORT at price %.2f with lotSize %d should be %.2f",
-                price, lotSize, expectedStopLoss));
+                priceValue, lotSize, expectedStopLoss));
     }
 
     @Test
@@ -72,14 +75,14 @@ class ProtectMoneyTest {
         // Case 1: Absolute stop loss is smaller (should be used)
         // price=100, lotSize=10 -> percent: 99.0, absolute: 100 - 300 = -200
         // Min should be -200.0
-        double stopLoss1 = ProtectMoney.getStopLoss(TradeType.LONG, 10, 100);
-        assertEquals(-200.0, stopLoss1, 0.01);
+        DecimalValue stopLoss1 = ProtectMoney.getStopLoss(TradeType.LONG, 10, new DecimalValue(100));
+        assertEquals(-200.0, stopLoss1.value(), 0.01);
 
         // Case 2: Percent stop loss is smaller (should be used)
         // price=10000, lotSize=100 -> percent: 9900.0, absolute: 10000 - 30 = 9970
         // Min should be 9900.0
-        double stopLoss2 = ProtectMoney.getStopLoss(TradeType.LONG, 100, 10000);
-        assertEquals(9900.0, stopLoss2, 0.01);
+        DecimalValue stopLoss2 = ProtectMoney.getStopLoss(TradeType.LONG, 100, new DecimalValue(10000));
+        assertEquals(9900.0, stopLoss2.value(), 0.01);
     }
 
     @Test
@@ -87,25 +90,25 @@ class ProtectMoneyTest {
     void testGetStopLossUsesMinimumForShort() {
         // With stopLossPercent = 1% and stopLossAbsolute = 3000
         // For SHORT: percent gives price * 1.01, absolute gives price + (3000/lotSize)
-        
+
         // Case 1: Percent stop loss is smaller (should be used)
         // price=10000, lotSize=100 -> percent: 10100.0, absolute: 10000 + 30 = 10030
         // Min should be 10030.0
-        double stopLoss1 = ProtectMoney.getStopLoss(TradeType.SHORT, 100, 10000);
-        assertEquals(10030.0, stopLoss1, 0.01);
-        
+        DecimalValue stopLoss1 = ProtectMoney.getStopLoss(TradeType.SHORT, 100, new DecimalValue(10000));
+        assertEquals(10030.0, stopLoss1.value(), 0.01);
+
         // Case 2: Absolute stop loss is smaller (should be used)
         // price=100, lotSize=10 -> percent: 101.0, absolute: 100 + 300 = 400
         // Min should be 101.0
-        double stopLoss2 = ProtectMoney.getStopLoss(TradeType.SHORT, 10, 100);
-        assertEquals(101.0, stopLoss2, 0.01);
+        DecimalValue stopLoss2 = ProtectMoney.getStopLoss(TradeType.SHORT, 10, new DecimalValue(100));
+        assertEquals(101.0, stopLoss2.value(), 0.01);
     }
 
     @Test
     @DisplayName("Should throw exception for LONG_EXIT trade type")
     void testGetStopLossThrowsExceptionForLongExit() {
         assertThrows(RuntimeException.class, () -> {
-            ProtectMoney.getStopLoss(TradeType.LONG_EXIT, 100, 100);
+            ProtectMoney.getStopLoss(TradeType.LONG_EXIT, 100, new DecimalValue(100));
         });
     }
 
@@ -113,7 +116,7 @@ class ProtectMoneyTest {
     @DisplayName("Should throw exception for SHORT_EXIT trade type")
     void testGetStopLossThrowsExceptionForShortExit() {
         assertThrows(RuntimeException.class, () -> {
-            ProtectMoney.getStopLoss(TradeType.SHORT_EXIT, 100, 100);
+            ProtectMoney.getStopLoss(TradeType.SHORT_EXIT, 100, new DecimalValue(100));
         });
     }
 
@@ -141,35 +144,35 @@ class ProtectMoneyTest {
     void testGetStopLossWithVerySmallPrice() {
         // price=1.0, lotSize=100 -> percent: 0.99, absolute: 1.0 - 30 = -29.0
         // Min should be -29.0
-        double stopLoss = ProtectMoney.getStopLoss(TradeType.LONG, 100, 1.0);
-        assertEquals(-29.0, stopLoss, 0.01);
+        DecimalValue stopLoss = ProtectMoney.getStopLoss(TradeType.LONG, 100, new DecimalValue(1.0));
+        assertEquals(-29.0, stopLoss.value(), 0.01);
     }
 
     @Test
     @DisplayName("Should handle edge case with very large price")
     void testGetStopLossWithVeryLargePrice() {
-        double stopLoss = ProtectMoney.getStopLoss(TradeType.LONG, 100, 100000.0);
-        assertTrue(stopLoss > 0, "Stop loss should be positive for large prices");
-        assertEquals(99000.0, stopLoss, 0.01);
+        DecimalValue stopLoss = ProtectMoney.getStopLoss(TradeType.LONG, 100, new DecimalValue(100000.0));
+        assertTrue(stopLoss.value() > 0, "Stop loss should be positive for large prices");
+        assertEquals(99000.0, stopLoss.value(), 0.01);
     }
 
     @Test
     @DisplayName("Should handle edge case with lot size of 1")
     void testGetStopLossWithLotSizeOne() {
         // With lotSize=1, absolute stop loss = price - 3000 (for LONG)
-        double stopLoss = ProtectMoney.getStopLoss(TradeType.LONG, 1, 5000.0);
+        DecimalValue stopLoss = ProtectMoney.getStopLoss(TradeType.LONG, 1, new DecimalValue(5000.0));
         // percent: 4950.0, absolute: 5000 - 3000 = 2000
         // Min should be 2000.0
-        assertEquals(2000.0, stopLoss, 0.01);
+        assertEquals(2000.0, stopLoss.value(), 0.01);
     }
 
     @Test
     @DisplayName("Should handle edge case with very large lot size")
     void testGetStopLossWithLargeLotSize() {
         // With lotSize=1000, absolute stop loss = price - 3 (for LONG)
-        double stopLoss = ProtectMoney.getStopLoss(TradeType.LONG, 1000, 100.0);
+        DecimalValue stopLoss = ProtectMoney.getStopLoss(TradeType.LONG, 1000, new DecimalValue(100.0));
         // percent: 99.0, absolute: 100 - 3 = 97
         // Min should be 97.0
-        assertEquals(97.0, stopLoss, 0.01);
+        assertEquals(97.0, stopLoss.value(), 0.01);
     }
 }

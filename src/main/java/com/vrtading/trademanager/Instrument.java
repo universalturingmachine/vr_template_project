@@ -1,5 +1,7 @@
 package com.vrtading.trademanager;
 
+import com.mytrading.utils.DecimalValue;
+
 import java.time.LocalDate;
 
 public record Instrument(
@@ -7,8 +9,8 @@ public record Instrument(
     long exchangeToken,
     String tradingSymbol,
     String name,
-    double lastPrice,
-    double tickSize,
+    DecimalValue lastPrice,
+    DecimalValue tickSize,
     String instrumentType,
     String segment,
     String exchange,
