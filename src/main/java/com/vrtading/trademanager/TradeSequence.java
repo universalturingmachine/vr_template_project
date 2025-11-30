@@ -10,6 +10,8 @@ import java.util.List;
 
 @Slf4j
 public class TradeSequence {
+    @Getter
+    private final TradeDirection tradeDirection;
     private final List<VRTrade> tradeList;
 	private final DecimalValue totalOutstandingShares;
 	@Getter
@@ -19,7 +21,8 @@ public class TradeSequence {
     @Getter
     private double maxPrice;
 
-	public TradeSequence() {
+	public TradeSequence(TradeDirection tradeDirection) {
+        this.tradeDirection = tradeDirection;
         this.tradeList = new ArrayList<>();
         this.totalOutstandingShares = new DecimalValue(0);
         this.active = true;

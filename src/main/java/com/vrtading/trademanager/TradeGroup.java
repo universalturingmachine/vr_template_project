@@ -16,7 +16,8 @@ public class TradeGroup {
 
 	public void enterTrade(VRTrade vrTrade) {
         if(!isActive()) {
-            TradeSequence tradeSequence = new TradeSequence();
+            TradeDirection tradeDirection = Utils.getTradeDirection(vrTrade.type());
+            TradeSequence tradeSequence = new TradeSequence(tradeDirection);
             tradeSequences.add(tradeSequence);
         }
         tradeSequences.getLast().addTrade(vrTrade);

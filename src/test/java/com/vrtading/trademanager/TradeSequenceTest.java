@@ -20,7 +20,8 @@ class TradeSequenceTest {
 
     @BeforeEach
     void setUp() {
-        tradeSequence = new TradeSequence();
+        TradeDirection tradeDirection = TradeDirection.LONG;
+        tradeSequence = new TradeSequence(tradeDirection);
         timestamp = OffsetDateTime.of(2024, 1, 15, 10, 30, 0, 0, ZoneOffset.ofHours(5));
     }
 
@@ -58,6 +59,23 @@ class TradeSequenceTest {
     void testNewSequenceHasZeroOutstandingShares() {
         DecimalValue outstanding = tradeSequence.getTotalOutstandingShares();
         assertEquals(0.0, outstanding.value(), 0.001, "New sequence should have 0 outstanding shares");
+    }
+
+    @Test
+    @DisplayName("New TradeSequence should have correct trade direction")
+    void testNewSequenceHasCorrectTradeDirection() {
+        assertEquals(TradeDirection.LONG, tradeSequence.getTradeDirection(),
+            "TradeSequence should have LONG direction");
+    }
+
+    @Test
+    @DisplayName("TradeSequence with SHORT direction should be created correctly")
+    void testShortTradeSequence() {
+        TradeSequence shortSequence = new TradeSequence(TradeDirection.SHORT);
+        assertEquals(TradeDirection.SHORT, shortSequence.getTradeDirection(),
+            "TradeSequence should have SHORT direction");
+        assertTrue(shortSequence.isActive(), "New SHORT sequence should be active");
+        assertEquals(0.0, shortSequence.getTotalOutstandingShares().value(), 0.001);
     }
 
     @Test
@@ -157,11 +175,31 @@ class TradeSequenceTest {
     @Test
     @DisplayName("Should handle SHORT trades correctly")
     void testShortTrades() {
-        tradeSequence.addTrade(createTrade(TradeType.SHORT, 100, 2000.00));
-        assertEquals(100.0, tradeSequence.getTotalOutstandingShares().value(), 0.001);
+        TradeSequence shortSequence = new TradeSequence(TradeDirection.SHORT);
+        shortSequence.addTrade(createTrade(TradeType.SHORT, 100, 2000.00));
+        assertEquals(100.0, shortSequence.getTotalOutstandingShares().value(), 0.001);
 
-        tradeSequence.addTrade(createTrade(TradeType.SHORT_EXIT, 100, 1950.00));
-        assertEquals(0.0, tradeSequence.getTotalOutstandingShares().value(), 0.001);
+        shortSequence.addTrade(createTrade(TradeType.SHORT_EXIT, 100, 1950.00));
+        assertEquals(0.0, shortSequence.getTotalOutstandingShares().value(), 0.001);
+        assertFalse(shortSequence.isActive());
+    }
+
+    @Test
+    @DisplayName("TradeDirection should remain constant throughout sequence lifecycle")
+    void testTradeDirectionRemainsConstant() {
+        assertEquals(TradeDirection.LONG, tradeSequence.getTradeDirection());
+
+        tradeSequence.addTrade(createTrade(TradeType.LONG, 100, 1500.00));
+        assertEquals(TradeDirection.LONG, tradeSequence.getTradeDirection(),
+            "Direction should not change after adding entry trade");
+
+        tradeSequence.addTrade(createTrade(TradeType.LONG_EXIT, 50, 1550.00));
+        assertEquals(TradeDirection.LONG, tradeSequence.getTradeDirection(),
+            "Direction should not change after adding exit trade");
+
+        tradeSequence.addTrade(createTrade(TradeType.LONG_EXIT, 50, 1560.00));
+        assertEquals(TradeDirection.LONG, tradeSequence.getTradeDirection(),
+            "Direction should not change even when sequence becomes inactive");
         assertFalse(tradeSequence.isActive());
     }
 

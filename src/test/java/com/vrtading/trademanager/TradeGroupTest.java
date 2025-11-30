@@ -67,10 +67,32 @@ class TradeGroupTest {
     @DisplayName("First trade should create a new sequence")
     void testFirstTradeCreatesSequence() throws Exception {
         tradeGroup.enterTrade(createTrade(TradeType.LONG, 100, 1500.00));
-        
+
         List<TradeSequence> sequences = getTradeSequences();
         assertEquals(1, sequences.size(), "Should have exactly 1 sequence");
         assertTrue(sequences.get(0).isActive(), "First sequence should be active");
+    }
+
+    @Test
+    @DisplayName("First LONG trade should create sequence with LONG direction")
+    void testFirstLongTradeCreatesLongSequence() throws Exception {
+        tradeGroup.enterTrade(createTrade(TradeType.LONG, 100, 1500.00));
+
+        List<TradeSequence> sequences = getTradeSequences();
+        assertEquals(1, sequences.size());
+        assertEquals(TradeDirection.LONG, sequences.get(0).getTradeDirection(),
+            "Sequence should have LONG direction");
+    }
+
+    @Test
+    @DisplayName("First SHORT trade should create sequence with SHORT direction")
+    void testFirstShortTradeCreatesShortSequence() throws Exception {
+        tradeGroup.enterTrade(createTrade(TradeType.SHORT, 100, 2000.00));
+
+        List<TradeSequence> sequences = getTradeSequences();
+        assertEquals(1, sequences.size());
+        assertEquals(TradeDirection.SHORT, sequences.get(0).getTradeDirection(),
+            "Sequence should have SHORT direction");
     }
 
     @Test
@@ -178,15 +200,33 @@ class TradeGroupTest {
         // Complete first sequence
         tradeGroup.enterTrade(createTrade(TradeType.LONG, 100, 1500.00));
         tradeGroup.enterTrade(createTrade(TradeType.LONG_EXIT, 100, 1550.00));
-        
+
         // Start new sequence
         tradeGroup.enterTrade(createTrade(TradeType.LONG, 50, 1600.00));
-        
+
         List<TradeSequence> sequences = getTradeSequences();
         assertEquals(2, sequences.size(), "Should have 2 sequences");
         assertFalse(sequences.get(0).isActive(), "First sequence should be inactive");
         assertTrue(sequences.get(1).isActive(), "Second sequence should be active");
         assertEquals(50.0, sequences.get(1).getTotalOutstandingShares().value(), 0.001);
+    }
+
+    @Test
+    @DisplayName("New sequence after completion should use direction from new entry trade")
+    void testNewSequenceUsesNewTradeDirection() throws Exception {
+        // First sequence: LONG
+        tradeGroup.enterTrade(createTrade(TradeType.LONG, 100, 1500.00));
+        tradeGroup.enterTrade(createTrade(TradeType.LONG_EXIT, 100, 1550.00));
+
+        // Second sequence: SHORT
+        tradeGroup.enterTrade(createTrade(TradeType.SHORT, 50, 2000.00));
+
+        List<TradeSequence> sequences = getTradeSequences();
+        assertEquals(2, sequences.size());
+        assertEquals(TradeDirection.LONG, sequences.get(0).getTradeDirection(),
+            "First sequence should be LONG");
+        assertEquals(TradeDirection.SHORT, sequences.get(1).getTradeDirection(),
+            "Second sequence should be SHORT");
     }
     
     @Test
@@ -195,20 +235,25 @@ class TradeGroupTest {
         // Sequence 1
         tradeGroup.enterTrade(createTrade(TradeType.LONG, 100, 1500.00));
         tradeGroup.enterTrade(createTrade(TradeType.LONG_EXIT, 100, 1550.00));
-        
+
         // Sequence 2
         tradeGroup.enterTrade(createTrade(TradeType.SHORT, 50, 2000.00));
         tradeGroup.enterTrade(createTrade(TradeType.SHORT_EXIT, 50, 1950.00));
-        
+
         // Sequence 3
         tradeGroup.enterTrade(createTrade(TradeType.LONG, 75, 1600.00));
-        
+
         List<TradeSequence> sequences = getTradeSequences();
         assertEquals(3, sequences.size(), "Should have 3 sequences");
         assertFalse(sequences.get(0).isActive(), "Sequence 1 should be inactive");
         assertFalse(sequences.get(1).isActive(), "Sequence 2 should be inactive");
         assertTrue(sequences.get(2).isActive(), "Sequence 3 should be active");
         assertEquals(75.0, sequences.get(2).getTotalOutstandingShares().value(), 0.001);
+
+        // Verify directions
+        assertEquals(TradeDirection.LONG, sequences.get(0).getTradeDirection());
+        assertEquals(TradeDirection.SHORT, sequences.get(1).getTradeDirection());
+        assertEquals(TradeDirection.LONG, sequences.get(2).getTradeDirection());
     }
 
     @Test
@@ -268,6 +313,45 @@ class TradeGroupTest {
         assertFalse(sequences.get(0).isActive(), "All sequences should be inactive");
         assertFalse(sequences.get(1).isActive(), "All sequences should be inactive");
         assertFalse(sequences.get(2).isActive(), "All sequences should be inactive");
+
+        // Verify alternating directions
+        assertEquals(TradeDirection.LONG, sequences.get(0).getTradeDirection());
+        assertEquals(TradeDirection.SHORT, sequences.get(1).getTradeDirection());
+        assertEquals(TradeDirection.LONG, sequences.get(2).getTradeDirection());
+    }
+
+    @Test
+    @DisplayName("Should handle consecutive LONG sequences")
+    void testConsecutiveLongSequences() throws Exception {
+        // Sequence 1: LONG
+        tradeGroup.enterTrade(createTrade(TradeType.LONG, 100, 1500.00));
+        tradeGroup.enterTrade(createTrade(TradeType.LONG_EXIT, 100, 1550.00));
+
+        // Sequence 2: LONG
+        tradeGroup.enterTrade(createTrade(TradeType.LONG, 50, 1600.00));
+        tradeGroup.enterTrade(createTrade(TradeType.LONG_EXIT, 50, 1650.00));
+
+        List<TradeSequence> sequences = getTradeSequences();
+        assertEquals(2, sequences.size());
+        assertEquals(TradeDirection.LONG, sequences.get(0).getTradeDirection());
+        assertEquals(TradeDirection.LONG, sequences.get(1).getTradeDirection());
+    }
+
+    @Test
+    @DisplayName("Should handle consecutive SHORT sequences")
+    void testConsecutiveShortSequences() throws Exception {
+        // Sequence 1: SHORT
+        tradeGroup.enterTrade(createTrade(TradeType.SHORT, 100, 2000.00));
+        tradeGroup.enterTrade(createTrade(TradeType.SHORT_EXIT, 100, 1950.00));
+
+        // Sequence 2: SHORT
+        tradeGroup.enterTrade(createTrade(TradeType.SHORT, 50, 1900.00));
+        tradeGroup.enterTrade(createTrade(TradeType.SHORT_EXIT, 50, 1850.00));
+
+        List<TradeSequence> sequences = getTradeSequences();
+        assertEquals(2, sequences.size());
+        assertEquals(TradeDirection.SHORT, sequences.get(0).getTradeDirection());
+        assertEquals(TradeDirection.SHORT, sequences.get(1).getTradeDirection());
     }
 
     @Test
