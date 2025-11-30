@@ -25,6 +25,8 @@ class TradeGroupTest {
     }
 
     private VRTrade createTrade(TradeType type, double quantity, double price) {
+        StopLoss stopLoss = new StopLoss(StopLoss.SLType.Absolute, new DecimalValue(100));
+
         return new VRTrade(
             "TestBroker",
             "INST123",
@@ -35,7 +37,7 @@ class TradeGroupTest {
             type,
             new DecimalValue(quantity),
             new DecimalValue(price),
-            new DecimalValue(price * 0.99)
+            stopLoss
         );
     }
 

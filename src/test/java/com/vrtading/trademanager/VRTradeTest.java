@@ -13,6 +13,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class VRTradeTest {
 
     private VRTrade createTestTrade(TradeType type) {
+        StopLoss stopLoss = new StopLoss(StopLoss.SLType.Absolute, new DecimalValue(100));
+
         return new VRTrade(
             "TestBroker",
             "INST123",
@@ -23,7 +25,7 @@ class VRTradeTest {
             type,
             new DecimalValue(100),
             new DecimalValue(1500.50),
-            new DecimalValue(1485.00)
+            stopLoss
         );
     }
 

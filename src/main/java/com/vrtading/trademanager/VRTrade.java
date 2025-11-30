@@ -1,6 +1,7 @@
 package com.vrtading.trademanager;
 
 import com.mytrading.utils.DecimalValue;
+import lombok.NonNull;
 
 import java.time.OffsetDateTime;
 
@@ -14,9 +15,10 @@ public record VRTrade(
         TradeType type,
         DecimalValue quantity,
         DecimalValue price,
-        DecimalValue stopLoss
+        StopLoss stopLoss
 ) {
-	@Override
+	@NonNull
+    @Override
 	public String toString() {
 		return "VRTrade [" + instrumentId + ", " + timestamp + ", type=" + type + ", quantity=" + quantity
 				+ ", price=" + price + ", stopLoss=" + stopLoss + "]";
