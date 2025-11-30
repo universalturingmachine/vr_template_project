@@ -1,5 +1,6 @@
 package com.vrtading.trademanager;
 
+import com.mytrading.utils.Bar;
 import com.mytrading.utils.DecimalValue;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -13,11 +14,17 @@ public class TradeSequence {
 	private final DecimalValue totalOutstandingShares;
 	@Getter
     private boolean active;
+    @Getter
+    private double minPrice;
+    @Getter
+    private double maxPrice;
 
 	public TradeSequence() {
         this.tradeList = new ArrayList<>();
         this.totalOutstandingShares = new DecimalValue(0);
         this.active = true;
+        this.minPrice = Double.MAX_VALUE;
+        this.maxPrice = Double.MIN_VALUE;
 	}
 	
 	public void addTrade(VRTrade vrTrade) {
@@ -49,4 +56,13 @@ public class TradeSequence {
     public void log() {
 		tradeList.forEach((trade)->log.info(trade.toString()));
 	}
+
+    public void newBarArrived(Bar bar) {
+        if(!active) {
+            throw new RuntimeException("Calling newBarArrived on inactive trade sequence");
+        }
+
+        minPrice = Double.min(minPrice, bar.low());
+        maxPrice = Double.max(maxPrice, bar.high());
+    }
 }

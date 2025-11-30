@@ -1,5 +1,6 @@
 package com.vrtading.trademanager;
 
+import com.mytrading.utils.Bar;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -14,10 +15,21 @@ public class TradeGroup {
 	}
 
 	public void enterTrade(VRTrade vrTrade) {
-        if(tradeSequences.isEmpty() || !tradeSequences.getLast().isActive()) {
+        if(!isActive()) {
             TradeSequence tradeSequence = new TradeSequence();
             tradeSequences.add(tradeSequence);
         }
         tradeSequences.getLast().addTrade(vrTrade);
 	}
+
+    public void newBarArrived(Bar bar) {
+        if(!isActive()) {
+            return;
+        }
+        tradeSequences.getLast().newBarArrived(bar);
+    }
+
+    private boolean isActive() {
+        return !tradeSequences.isEmpty() && tradeSequences.getLast().isActive();
+    }
 }
