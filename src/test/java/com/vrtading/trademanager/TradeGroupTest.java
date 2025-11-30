@@ -70,7 +70,7 @@ class TradeGroupTest {
 
         List<TradeSequence> sequences = getTradeSequences();
         assertEquals(1, sequences.size(), "Should have exactly 1 sequence");
-        assertTrue(sequences.get(0).isActive(), "First sequence should be active");
+        assertTrue(sequences.getFirst().isActive(), "First sequence should be active");
     }
 
     @Test
@@ -80,7 +80,7 @@ class TradeGroupTest {
 
         List<TradeSequence> sequences = getTradeSequences();
         assertEquals(1, sequences.size());
-        assertEquals(TradeDirection.LONG, sequences.get(0).getTradeDirection(),
+        assertEquals(TradeDirection.LONG, sequences.getFirst().getTradeDirection(),
             "Sequence should have LONG direction");
     }
 
@@ -91,7 +91,7 @@ class TradeGroupTest {
 
         List<TradeSequence> sequences = getTradeSequences();
         assertEquals(1, sequences.size());
-        assertEquals(TradeDirection.SHORT, sequences.get(0).getTradeDirection(),
+        assertEquals(TradeDirection.SHORT, sequences.getFirst().getTradeDirection(),
             "Sequence should have SHORT direction");
     }
 
@@ -104,7 +104,7 @@ class TradeGroupTest {
         
         List<TradeSequence> sequences = getTradeSequences();
         assertEquals(1, sequences.size(), "Should have exactly 1 sequence for all entry trades");
-        assertTrue(sequences.get(0).isActive(), "Sequence should be active");
+        assertTrue(sequences.getFirst().isActive(), "Sequence should be active");
     }
 
     @Test
@@ -115,7 +115,7 @@ class TradeGroupTest {
         
         List<TradeSequence> sequences = getTradeSequences();
         assertEquals(1, sequences.size(), "Should have exactly 1 sequence");
-        assertTrue(sequences.get(0).isActive(), "Sequence should be active");
+        assertTrue(sequences.getFirst().isActive(), "Sequence should be active");
     }
 
     @Test
@@ -159,7 +159,7 @@ class TradeGroupTest {
         
         List<TradeSequence> sequences = getTradeSequences();
         assertEquals(1, sequences.size(), "Should have exactly 1 sequence");
-        assertTrue(sequences.get(0).isActive(), "Sequence should be active");
+        assertTrue(sequences.getFirst().isActive(), "Sequence should be active");
     }
 
     @Test
@@ -355,6 +355,64 @@ class TradeGroupTest {
     }
 
     @Test
+    @DisplayName("getActiveTradeSequence should return null when no sequences exist")
+    void testGetActiveTradeSequenceWhenEmpty() {
+        TradeSequence activeSequence = tradeGroup.getActiveTradeSequence();
+        assertNull(activeSequence, "Should return null when no sequences exist");
+    }
+
+    @Test
+    @DisplayName("getActiveTradeSequence should return the active sequence")
+    void testGetActiveTradeSequenceWhenActive() throws Exception {
+        tradeGroup.enterTrade(createTrade(TradeType.LONG, 100, 1500.00));
+
+        TradeSequence activeSequence = tradeGroup.getActiveTradeSequence();
+        assertNotNull(activeSequence, "Should return active sequence");
+        assertTrue(activeSequence.isActive(), "Returned sequence should be active");
+        assertEquals(100.0, activeSequence.getTotalOutstandingShares().value(), 0.001);
+
+        // Verify it's the same as the last sequence
+        List<TradeSequence> sequences = getTradeSequences();
+        assertSame(sequences.getLast(), activeSequence,
+            "Should return the same instance as the last sequence");
+    }
+
+    @Test
+    @DisplayName("getActiveTradeSequence should return null when last sequence is inactive")
+    void testGetActiveTradeSequenceWhenInactive() {
+        tradeGroup.enterTrade(createTrade(TradeType.LONG, 100, 1500.00));
+        tradeGroup.enterTrade(createTrade(TradeType.LONG_EXIT, 100, 1550.00));
+
+        TradeSequence activeSequence = tradeGroup.getActiveTradeSequence();
+        assertNull(activeSequence, "Should return null when last sequence is inactive");
+    }
+
+    @Test
+    @DisplayName("getActiveTradeSequence should return the last active sequence when multiple exist")
+    void testGetActiveTradeSequenceWithMultipleSequences() throws Exception {
+        // First sequence (will be inactive)
+        tradeGroup.enterTrade(createTrade(TradeType.LONG, 100, 1500.00));
+        tradeGroup.enterTrade(createTrade(TradeType.LONG_EXIT, 100, 1550.00));
+
+        // Second sequence (active)
+        tradeGroup.enterTrade(createTrade(TradeType.SHORT, 50, 2000.00));
+
+        TradeSequence activeSequence = tradeGroup.getActiveTradeSequence();
+        assertNotNull(activeSequence, "Should return the active sequence");
+        assertTrue(activeSequence.isActive(), "Returned sequence should be active");
+        assertEquals(TradeDirection.SHORT, activeSequence.getTradeDirection(),
+            "Should return the SHORT sequence");
+        assertEquals(50.0, activeSequence.getTotalOutstandingShares().value(), 0.001);
+
+        // Verify it's the last sequence, not the first
+        List<TradeSequence> sequences = getTradeSequences();
+        assertSame(sequences.getLast(), activeSequence,
+            "Should return the last sequence");
+        assertNotSame(sequences.getFirst(), activeSequence,
+            "Should not return the first (inactive) sequence");
+    }
+
+    @Test
     @DisplayName("newBarArrived should do nothing when no active sequence")
     void testNewBarArrivedWithNoActiveSequence() throws Exception {
         // No trades yet
@@ -386,8 +444,8 @@ class TradeGroupTest {
 
         List<TradeSequence> sequences = getTradeSequences();
         assertEquals(1, sequences.size());
-        assertEquals(1480.0, sequences.get(0).getMinPrice(), 0.001);
-        assertEquals(1550.0, sequences.get(0).getMaxPrice(), 0.001);
+        assertEquals(1480.0, sequences.getFirst().getMinPrice(), 0.001);
+        assertEquals(1550.0, sequences.getFirst().getMaxPrice(), 0.001);
     }
 
     @Test
@@ -424,8 +482,8 @@ class TradeGroupTest {
         tradeGroup.newBarArrived(createBar(1520, 1560, 1500, 1550));
 
         List<TradeSequence> sequences = getTradeSequences();
-        assertEquals(1485.0, sequences.get(0).getMinPrice(), 0.001);
-        assertEquals(1560.0, sequences.get(0).getMaxPrice(), 0.001);
+        assertEquals(1485.0, sequences.getFirst().getMinPrice(), 0.001);
+        assertEquals(1560.0, sequences.getFirst().getMaxPrice(), 0.001);
     }
 
     @Test

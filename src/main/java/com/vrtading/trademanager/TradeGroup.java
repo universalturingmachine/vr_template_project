@@ -30,6 +30,10 @@ public class TradeGroup {
         tradeSequences.getLast().newBarArrived(bar);
     }
 
+    public TradeSequence getActiveTradeSequence() {
+        return isActive() ? tradeSequences.getLast(): null;
+    }
+
     private boolean isActive() {
         return !tradeSequences.isEmpty() && tradeSequences.getLast().isActive();
     }
