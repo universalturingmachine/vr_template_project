@@ -1,4 +1,4 @@
-package com.vrtading.trademanager;
+package com.vrtrading.trademanager;
 
 import com.mytrading.utils.Bar;
 import lombok.extern.slf4j.Slf4j;

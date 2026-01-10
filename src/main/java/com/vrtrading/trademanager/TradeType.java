@@ -1,4 +1,4 @@
-package com.vrtading.trademanager;
+package com.vrtrading.trademanager;
 
 public enum TradeType {
     LONG, SHORT, LONG_EXIT, SHORT_EXIT;

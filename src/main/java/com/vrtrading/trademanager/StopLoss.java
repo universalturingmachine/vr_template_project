@@ -1,4 +1,4 @@
-package com.vrtading.trademanager;
+package com.vrtrading.trademanager;
 
 import com.mytrading.utils.DecimalValue;
 import lombok.NonNull;

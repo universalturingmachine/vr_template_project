@@ -1,4 +1,4 @@
-package com.vrtading.trademanager;
+package com.vrtrading.trademanager;
 
 public final class Utils {
     private Utils() {

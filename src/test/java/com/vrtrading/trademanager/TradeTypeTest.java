@@ -1,4 +1,4 @@
-package com.vrtading.trademanager;
+package com.vrtrading.trademanager;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
