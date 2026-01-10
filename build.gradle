@@ -36,7 +36,7 @@ publishing {
 	publications {
 		create("mavenJava", MavenPublication) {
 			groupId = 'com.vrtrading'
-			artifactId = 'vr_template_project'
+			artifactId = 'vr_trade_manager'
 			version = '0.1'
 
 			from components.java
