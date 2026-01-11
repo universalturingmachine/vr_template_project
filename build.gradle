@@ -13,7 +13,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.mytrading.utils:myutils:0.4'
     implementation 'org.slf4j:slf4j-api:2.0.17'
     implementation 'ch.qos.logback:logback-classic:1.5.21'
     compileOnly 'org.projectlombok:lombok:1.18.42'
@@ -36,7 +35,7 @@ publishing {
 	publications {
 		create("mavenJava", MavenPublication) {
 			groupId = 'com.vrtrading'
-			artifactId = 'vr_trade_manager'
+			artifactId = 'vr_template_project'
 			version = '0.1'
 
 			from components.java
