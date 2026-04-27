@@ -1,6 +1,6 @@
 {
   "packages": {
-    "jdk" : "21",
+    "jdk" : "25",
     "gradle": "8.14"
   },
   "shell": {

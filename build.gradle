@@ -1,46 +1,46 @@
 plugins {
-	id "java-library"
-	id "maven-publish"
+    id "java-library"
+    id "maven-publish"
 }
 
 java {
-	sourceCompatibility = '21'
+    sourceCompatibility = '25'
 }
 
 repositories {
-	mavenLocal()
-	mavenCentral()
+    mavenLocal()
+    mavenCentral()
 }
 
 dependencies {
     implementation 'org.slf4j:slf4j-api:2.0.17'
-    implementation 'ch.qos.logback:logback-classic:1.5.21'
+    implementation 'ch.qos.logback:logback-classic:1.5.25'
     compileOnly 'org.projectlombok:lombok:1.18.42'
-	annotationProcessor 'org.projectlombok:lombok:1.18.42'
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
 
-	testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 def sourceJar = tasks.register('sourceJar', Jar) {
-	archiveClassifier.set('sources')
-	from sourceSets.main.allJava
+    archiveClassifier.set('sources')
+    from sourceSets.main.allJava
 }
 
 publishing {
-	publications {
-		create("mavenJava", MavenPublication) {
-			groupId = 'com.vrtrading'
-			artifactId = 'vr_template_project'
-			version = '0.1'
+    publications {
+        create("mavenJava", MavenPublication) {
+            groupId = 'com.vrtrading'
+            artifactId = 'vr_template_project'
+            version = '0.1'
 
-			from components.java
-			//artifact sourceJar
-			artifact sourceJar.get()
-		}
-	}
+            from components.java
+            //artifact sourceJar
+            artifact sourceJar.get()
+        }
+    }
 }
