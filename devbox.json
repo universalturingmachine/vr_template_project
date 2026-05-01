@@ -1,7 +1,7 @@
 {
   "packages": {
     "jdk" : "25",
-    "gradle": "8.14"
+    "gradle_9": "9.4.1"
   },
   "shell": {
     "init_hook": [

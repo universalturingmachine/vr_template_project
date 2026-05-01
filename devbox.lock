@@ -5,52 +5,52 @@
       "last_modified": "2025-11-18T11:19:29Z",
       "resolved": "github:NixOS/nixpkgs/6f374686605df381de8541c072038472a5ea2e2d?lastModified=1763464769&narHash=sha256-AJHrsT7VoeQzErpBRlLJM1SODcaayp0joAoEA35yiwM%3D"
     },
-    "gradle@8.14": {
-      "last_modified": "2025-11-15T07:28:48Z",
+    "gradle_9@9.4.1": {
+      "last_modified": "2026-04-23T13:07:47Z",
       "plugin_version": "0.0.1",
-      "resolved": "github:NixOS/nixpkgs/1d4c88323ac36805d09657d13a5273aea1b34f0c#gradle",
+      "resolved": "github:NixOS/nixpkgs/01fbdeef22b76df85ea168fbfe1bfd9e63681b30#gradle_9",
       "source": "devbox-search",
-      "version": "8.14.3",
+      "version": "9.4.1",
       "systems": {
         "aarch64-darwin": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/687cpjcz73b8d48qp9wrd7avz9c4wxbl-gradle-8.14.3",
+              "path": "/nix/store/a7haskzxxy2czjb8r58dl2x0xgvghkz9-gradle-9.4.1",
               "default": true
             }
           ],
-          "store_path": "/nix/store/687cpjcz73b8d48qp9wrd7avz9c4wxbl-gradle-8.14.3"
+          "store_path": "/nix/store/a7haskzxxy2czjb8r58dl2x0xgvghkz9-gradle-9.4.1"
         },
         "aarch64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/yi72pplirvic8c0v2yhx09byagyq13i3-gradle-8.14.3",
+              "path": "/nix/store/jppp66bdq9vg6afl7mbzrdw52picljk9-gradle-9.4.1",
               "default": true
             }
           ],
-          "store_path": "/nix/store/yi72pplirvic8c0v2yhx09byagyq13i3-gradle-8.14.3"
+          "store_path": "/nix/store/jppp66bdq9vg6afl7mbzrdw52picljk9-gradle-9.4.1"
         },
         "x86_64-darwin": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/cvldh3159939289g9ga45nw25gzvbh0r-gradle-8.14.3",
+              "path": "/nix/store/x85n1f6sl4baqz9y768wg1bdwnq31m66-gradle-9.4.1",
               "default": true
             }
           ],
-          "store_path": "/nix/store/cvldh3159939289g9ga45nw25gzvbh0r-gradle-8.14.3"
+          "store_path": "/nix/store/x85n1f6sl4baqz9y768wg1bdwnq31m66-gradle-9.4.1"
         },
         "x86_64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/rck04lfaywfxrjxjp4z2ik3zdg5j09mb-gradle-8.14.3",
+              "path": "/nix/store/dl37zwiyzzzanzqjzllf1clfm5rj9s53-gradle-9.4.1",
               "default": true
             }
           ],
-          "store_path": "/nix/store/rck04lfaywfxrjxjp4z2ik3zdg5j09mb-gradle-8.14.3"
+          "store_path": "/nix/store/dl37zwiyzzzanzqjzllf1clfm5rj9s53-gradle-9.4.1"
         }
       }
     },
